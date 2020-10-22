@@ -1411,11 +1411,10 @@ module NUOPC_Base
           endif
         endif
       enddo
-      
+
+      presentStandardNameList = .false.
       if (present(StandardNameList)) then
-        if (associated(StandardNameList)) then
-          presentStandardNameList = .false.
-        else
+        if (.not.associated(StandardNameList)) then
           presentStandardNameList = .true.
           allocate(StandardNameList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating StandardNameList", &
@@ -1425,11 +1424,10 @@ module NUOPC_Base
             return  ! bail out
         endif
       endif
-      
+
+      presentItemNameList = .false.
       if (present(itemNameList)) then
-        if (associated(itemNameList)) then
-          presentItemNameList = .false.
-        else
+        if (.not.associated(itemNameList)) then
           presentItemNameList = .true.
           allocate(itemNameList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating itemNameList", &
@@ -1440,10 +1438,9 @@ module NUOPC_Base
         endif
       endif
 
+      presentConnectedList = .false.
       if (present(ConnectedList)) then
-        if (associated(ConnectedList)) then
-          presentConnectedList = .false.
-        else
+        if (.not.associated(ConnectedList)) then
           presentConnectedList = .true.
           allocate(ConnectedList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating ConnectedList", &
@@ -1454,10 +1451,9 @@ module NUOPC_Base
         endif
       endif
 
+      presentNamespaceList = .false.
       if (present(NamespaceList)) then
-        if (associated(NamespaceList)) then
-          presentNamespaceList = .false.
-        else
+        if (.not.associated(NamespaceList)) then
           presentNamespaceList = .true.
           allocate(NamespaceList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating NamespaceList", &
@@ -1468,10 +1464,9 @@ module NUOPC_Base
         endif
       endif
 
+      presentCplSetList = .false.
       if (present(CplSetList)) then
-        if (associated(CplSetList)) then
-          presentCplSetList = .false.
-        else
+        if (.not.associated(CplSetList)) then
           presentCplSetList = .true.
           allocate(CplSetList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating CplSetList", &
@@ -1482,10 +1477,9 @@ module NUOPC_Base
         endif
       endif
 
+      presentFieldList = .false.
       if (present(fieldList)) then
-        if (associated(fieldList)) then
-          presentFieldList = .false.
-        else
+        if (.not.associated(fieldList)) then
           presentFieldList = .true.
           allocate(fieldList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating fieldList", &
@@ -1496,10 +1490,9 @@ module NUOPC_Base
         endif
       endif
 
+      presentStateList = .false.
       if (present(stateList)) then
-        if (associated(stateList)) then
-          presentStateList = .false.
-        else
+        if (.not.associated(stateList)) then
           presentStateList = .true.
           allocate(stateList(fieldCount), stat=stat)
           if (ESMF_LogFoundAllocError(stat, msg="allocating stateList", &
@@ -3069,15 +3062,15 @@ module NUOPC_Base
           call NUOPC_GetAttribute(fieldNew, name=tempString, &
             value=value, rc=localrc)
           call ESMF_LogWrite(trim(fieldNameList(i))//":*** "//trim(value)// &
-            " ***: TransferAction", ESMF_LOGMSG_INFO, rc=localrc)
+            " ***: TransferAction", ESMF_LOGMSG_DEBUG, rc=localrc)
           call NUOPC_GetAttribute(fieldNew, name="ShareStatusField", &
             value=value, rc=localrc)
           call ESMF_LogWrite(trim(fieldNameList(i))//":*** "//trim(value)// &
-            " ***: ShareStatusField", ESMF_LOGMSG_INFO, rc=localrc)
+            " ***: ShareStatusField", ESMF_LOGMSG_DEBUG, rc=localrc)
           call NUOPC_GetAttribute(fieldNew, name="ShareStatusGeomObject", &
             value=value, rc=localrc)
           call ESMF_LogWrite(trim(fieldNameList(i))//":*** "//trim(value)// &
-            " ***: ShareStatusGeomObject:", ESMF_LOGMSG_INFO, rc=localrc)
+            " ***: ShareStatusGeomObject:", ESMF_LOGMSG_DEBUG, rc=localrc)
 #endif
           call NUOPC_GetAttribute(fieldNew, name=tempString, &
             value=value, rc=localrc)
