@@ -1629,14 +1629,14 @@ module NUOPC_Base
         rcToReturn=rc)) &
         return  ! bail out
 
-      if (nestedFlag.or.present(NamespaceList).or.present(CplSetList)) then
+      if (present(NamespaceList).or.present(CplSetList)) then
         call ESMF_InfoGetFromHost(state, info=info, rc=localrc)
         if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
           line=__LINE__, &
           file=FILENAME, &
           rcToReturn=rc)) &
           return  ! bail out
-        if (nestedFlag.or.present(NamespaceList)) then
+        if (present(NamespaceList)) then
           call ESMF_InfoGet(info, key="/NUOPC/Instance/Namespace", &
             value=namespace, rc=localrc)
           if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
@@ -4457,7 +4457,7 @@ module NUOPC_Base
     type(ESMF_CalKind_Flag) :: calkf
     integer                 :: localrc, i
     integer                 :: yy, mm, dd, h, m, s, ms, us, ns, ckf
-    type(ESMF_Info)         :: info
+    type(ESMF_Info)         :: info, infoRoot
 
     if (present(rc)) rc = ESMF_SUCCESS
     
@@ -4471,6 +4471,8 @@ module NUOPC_Base
       return  ! bail out
     ! convert calendar kind flag into integer
     ckf = calkf
+call ESMF_TraceRegionEnter("loop over fields", rc=rc)
+#if 0
     do i=1, size(fieldList)
       ! set the 10 integer values representing the time stamp
       call ESMF_InfoGetFromHost(fieldList(i), info=info, rc=localrc)
@@ -4487,6 +4489,39 @@ module NUOPC_Base
         rcToReturn=rc)) &
         return  ! bail out
     enddo
+#else
+    ! set the 10 integer values representing the time stamp
+    call ESMF_InfoGetFromHost(fieldList(1), info=infoRoot, rc=localrc)
+    if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+      line=__LINE__, &
+      file=FILENAME, &
+      rcToReturn=rc)) &
+      return  ! bail out
+    call ESMF_InfoSet(infoRoot, key="/NUOPC/Instance/TimeStamp", &
+      values=(/yy,mm,dd,h,m,s,ms,us,ns,ckf/), rc=localrc)
+    if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+      line=__LINE__, &
+      file=FILENAME, &
+      rcToReturn=rc)) &
+      return  ! bail out
+    do i=2, size(fieldList)
+      ! get the info object and copy attribute
+      call ESMF_InfoGetFromHost(fieldList(i), info=info, rc=localrc)
+      if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+        line=__LINE__, &
+        file=FILENAME, &
+        rcToReturn=rc)) &
+        return  ! bail out
+      call ESMF_InfoSet(info, key="/NUOPC/Instance/TimeStamp", &
+        value=infoRoot, rc=localrc)
+      if (ESMF_LogFoundError(rcToCheck=localrc, msg=ESMF_LOGERR_PASSTHRU, &
+        line=__LINE__, &
+        file=FILENAME, &
+        rcToReturn=rc)) &
+        return  ! bail out
+    enddo
+#endif
+call ESMF_TraceRegionExit("loop over fields", rc=rc)
   end subroutine
   !-----------------------------------------------------------------------------
 
